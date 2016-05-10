@@ -106,7 +106,8 @@ map = if server
     DRbObject.new(nil, "druby://#{ARGV.first}:9001")
   end
   
-player = { x: rand(width), y: rand(height), dead: false, health: 100, inventory: [], number: server ? 1 : 2 }
+player = { x: rand(width), y: rand(height), dead: false, health: 100, inventory: [], number: server ? 1 : map.
+flatten.select { |q| q.is_a? Numeric}.max+1 }
 
 map[player[:y]][player[:x]] = player[:number]
 
