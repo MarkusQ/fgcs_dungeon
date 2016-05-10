@@ -82,7 +82,7 @@ def draw(map)
             if block.is_a? Numeric
                 print ("%02i" % block).bg_blue
               elsif block == Wall or block == Space
-                print (block+block).white.bg_black
+                print (block+block).light_gray.bg_black
               else
                 print (" "+block.cyan).bg_black
               end
