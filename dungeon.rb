@@ -134,6 +134,7 @@ while not player[:dead]
         item_name = "'#{ch}'"
         item_verb = 'used'
         case ch
+          when "a" # Add two random inventory items
           when "b"
             item_name = 'bomb'
             item_verb = 'set off'
@@ -147,10 +148,15 @@ while not player[:dead]
                       }
                   }
               end
+          when "c" # Carry a wall or player
+          when "d" # Dagger / digger -- remove wall or hurt player
+          when "e" # ??
           when "f"
             item_name = 'food pellet'
             item_verb = 'ate'
             player[:health] += item_count*100
+          when "g" # Gold
+          when "t" # Teleport
           end
         if item_count > 0
             message << "You #{item_verb} #{item_count} #{item_name}s.  "
@@ -162,6 +168,7 @@ while not player[:dead]
       when "A"; x = (x-1) % width
       when "D"; x = (x+1) % width
       when "Q"; player[:dead] = true
+      when "T" # Trade
       end
     if y != player[:y] || x != player[:x]
         map[player[:y]][player[:x]] = Space
@@ -177,6 +184,7 @@ while not player[:dead]
             player[:inventory] << map[y][x]
             map[y][x] = Space
             player[:x],player[:y] = x,y
+            # Add something random somewhere
           end
         map[player[:y]][player[:x]] = player[:number]
       end
