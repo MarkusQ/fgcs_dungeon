@@ -71,12 +71,13 @@ def random_block
       end
   end
 
+100.times { puts }
 def draw(map)
     snap = map.map(&:to_a)
-    10.times { puts }
     puts ["black".black,"red".red,"green".green,"brown".brown,"navy".navy,"magenta".magenta,"cyan".cyan,
       "gray".gray,"dark gray".dark_gray,"salmon".salmon,"lime".lime,"yellow".yellow,"blue".blue,"pink".pink,"lcyan".light_cyan,
       "lgray".light_gray].join('  ')
+    print "\e[;H"
     snap.each_with_index { |line,y|
         line.each_with_index { |block,x|
             if block.is_a? Numeric
