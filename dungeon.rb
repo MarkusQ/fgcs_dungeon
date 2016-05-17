@@ -74,22 +74,17 @@ def random_block
 100.times { puts }
 def draw(map)
     snap = map.map(&:to_a)
-    puts ["black".black,"red".red,"green".green,"brown".brown,"navy".navy,"magenta".magenta,"cyan".cyan,
-      "gray".gray,"dark gray".dark_gray,"salmon".salmon,"lime".lime,"yellow".yellow,"blue".blue,"pink".pink,"lcyan".light_cyan,
-      "lgray".light_gray].join('  ')
-    print "\e[;H"
-    snap.each_with_index { |line,y|
-        line.each_with_index { |block,x|
+    print "\e[;H\e[;J",snap.each_with_index.map { |line,y|
+        line.each_with_index.map { |block,x|
             if block.is_a? Numeric
-                print ("%02i" % block).bg_blue
+                ("%02i" % block).bg_blue
               elsif block == Wall or block == Space
-                print (block+block).light_gray.bg_black
+                (block+block).light_gray.bg_black
               else
-                print (" "+block.cyan).bg_black
+                (" "+block.cyan).bg_black
               end
-          }
-        puts
-      }
+          }.join+"\n"
+      }.join
   end
 
 server = ARGV.length == 0
@@ -120,7 +115,7 @@ map[player[:y]][player[:x]] = player[:number]
 message = ""
 while not player[:dead]
     while (ch = get_char).nil?
-        sleep 0.1
+        sleep 0.02
         draw map
         puts "Health: #{player[:health]}  Inventory: #{player[:inventory].join(',')}   #{message}"
         puts "IP: #{local_ip}" if server
