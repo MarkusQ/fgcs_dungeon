@@ -252,7 +252,11 @@ while not player[:dead]
             player[:x],player[:y] = x,y
             x = rand(width)
             y = rand(height)
-            map[y][x] = random_item if map[y][x] == Space
+            while map[y][x] == Space
+                 x = rand(width)
+                 y = rand(height)
+              end
+            map[y][x] = random_item
           end
         map[player[:y]][player[:x]] = player[:number]
       end
