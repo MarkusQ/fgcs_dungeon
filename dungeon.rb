@@ -62,6 +62,7 @@ def get_char
 
 Wall  = "#"
 Space = " "
+Cat   = "C"
 
 def random_block
     case rand(100)
@@ -80,6 +81,8 @@ def draw(map)
                 ("%02i" % block).bg_blue
               elsif block == Wall or block == Space
                 (block+block).light_gray.bg_black
+              elsif block == Cat
+                (rand(2)==0) ? "😸"  : " 😸"
               else
                 (" "+block.cyan).bg_black
               end
