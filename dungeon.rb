@@ -143,12 +143,14 @@ while not player[:dead]
         message << "  You have died."
         player[:dead] = true
       end
+    being_carried = map[player[:y]][player[:x]] != player[:number]
     while (ch = get_char).nil?
         sleep 0.02
         draw map
         puts "Health: #{player[:health]}  Inventory: #{player[:inventory].join(',')}   #{message}"
         puts "IP: #{local_ip}" if server
         puts "Holding: #{player[:holding]}" if player[:holding]
+        puts "Being carried!" if being_carried
       end
     message = ""
     x,y = player[:x],player[:y]
@@ -191,10 +193,10 @@ while not player[:dead]
           else
             message << "You don't have any #{item_name}s!  "
           end
-      when "W"; y = (y-1) % height
-      when "S"; y = (y+1) % height
-      when "A"; x = (x-1) % width
-      when "D"; x = (x+1) % width
+      when "W"; y = (y-1) % height unless being_carried
+      when "S"; y = (y+1) % height unless being_carried
+      when "A"; x = (x-1) % width  unless being_carried
+      when "D"; x = (x+1) % width  unless being_carried
       when "Q"; player[:dead] = true
       when "T" # Trade
       when " "
@@ -215,7 +217,12 @@ while not player[:dead]
                 message << "Ouch!  "
               end
           when Numeric
-            message << "Excuse me.   "
+            if player[:can_carry]
+                pick_up(player,map,x,y)
+                message << "You picked up player ##{thing_here}.  "
+              else
+                message << "Excuse me.   "
+              end
           when Space
             player[:x],player[:y] = x,y
           else
