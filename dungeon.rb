@@ -143,7 +143,7 @@ player = {
     number: server ? 1 : map.flatten.select { |q| q.is_a? Numeric}.max+1
   }
 player.extend DRbUndumped
-map[-1][player[:number] = player
+map[-1][player[:number]] = player
 map[player[:y]][player[:x]] = player[:number]
 
 message = ""
@@ -151,7 +151,7 @@ prior_x,prior_y = 0,0
 while not player[:dead]
     if server
          (0...width).each { |x|
-             (0...height) { |y|
+             (0...height).each { |y|
                  n = map[y][x]
                  if n.is_a? Numeric
                       plr = players(n)
