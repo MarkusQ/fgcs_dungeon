@@ -1,3 +1,9 @@
+#
+# Warning: I've added the features we discussed but I did so while in a meeting & checking messages on
+# my phone & watching a cat video & stuff so the code in the last few commits bugs some may haves.  Use at
+# your own risk, be sure to report aby bugs you find.  Enjoy.  :)
+#
+
 require 'drb'
 require 'socket'
 
