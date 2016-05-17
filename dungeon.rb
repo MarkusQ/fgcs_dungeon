@@ -64,10 +64,14 @@ Wall  = "#"
 Space = " "
 Cat   = "C"
 
+def random_item
+    ('a'.ord+rand(10)).chr
+  end
+
 def random_block
     case rand(100)
       when  0..30; Wall
-      when 31..33; ('a'.ord+rand(26)).chr
+      when 31..33; random_item
       else Space
       end
   end
@@ -137,6 +141,7 @@ while not player[:dead]
         item_verb = 'used'
         case ch
           when "a" # Add two random inventory items
+            player[:inventory] << random_item << random_item
           when "b"
             item_name = 'bomb'
             item_verb = 'set off'
