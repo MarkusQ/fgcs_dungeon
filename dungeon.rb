@@ -168,7 +168,7 @@ while not player[:dead]
         item_verb = 'used'
         case ch
           when "a" # Add two random inventory items
-            player[:inventory] << random_item << random_item
+            item_count.times { player[:inventory] << random_item << random_item }
           when "b"
             item_name = 'bomb'
             item_verb = 'set off'
