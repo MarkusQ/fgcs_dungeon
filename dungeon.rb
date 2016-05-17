@@ -180,6 +180,21 @@ while not player[:dead]
             player[:can_carry] ||= 0
             player[:can_carry] += item_count
           when "d" # Dagger / digger -- remove wall or hurt player
+            if item_count > 0
+                (-1..1).each { |dx|
+                    (-1..1).each { |dy|
+                        x_ = (x+dx) % width
+                        y_ = (y+dy) % height
+                        if map[y_][x_] == Wall && rand(10) < item_count
+                            map[y_][x_] = Space
+                            message << "You broke the wall.  I'm telling!!  "
+                          elsif map[y_][x_].is_a? Numeric
+                            player[:health] -= item_count
+                          end
+                      }
+                  }
+              end
+            player[:inventory] += ['d']*item_count
           when "e" # ??
           when "f"
             item_name = 'food pellet'
