@@ -94,6 +94,23 @@ def draw(map)
       }.join
   end
 
+def pick_up(player,map,x,y)
+    player[:can_carry] -= 1
+    player[:can_carry] = nil if player[:can_carry] == 0
+    drop(player,map)
+    player[:holding] = map[y][x]
+    map[y][x] = Space
+    player[:x],player[:y] = x,y
+  end
+
+def drop(player,map)
+    if player[:holding]
+        map[player[:y]][player[:x]] = player[:holding]
+        player[:holding] = nil
+      end
+  end
+
+
 server = ARGV.length == 0
 
 map = if server
@@ -120,6 +137,7 @@ player = {
 map[player[:y]][player[:x]] = player[:number]
 
 message = ""
+prior_x,prior_y = 0,0
 while not player[:dead]
     if player[:health] < 0
         message << "  You have died."
@@ -130,6 +148,7 @@ while not player[:dead]
         draw map
         puts "Health: #{player[:health]}  Inventory: #{player[:inventory].join(',')}   #{message}"
         puts "IP: #{local_ip}" if server
+        puts "Holding: #{player[:holding]}" if player[:holding]
       end
     message = ""
     x,y = player[:x],player[:y]
@@ -156,6 +175,8 @@ while not player[:dead]
                   }
               end
           when "c" # Carry a wall or player
+            player[:can_carry] ||= 0
+            player[:can_carry] += item_count
           when "d" # Dagger / digger -- remove wall or hurt player
           when "e" # ??
           when "f"
@@ -176,24 +197,34 @@ while not player[:dead]
       when "D"; x = (x+1) % width
       when "Q"; player[:dead] = true
       when "T" # Trade
+      when " "
+        drop(player,map)
+        player[:x],player[:y] = prior_x,prior_y
       end
     if y != player[:y] || x != player[:x]
+        prior_x,prior_y = player[:x],player[:y]
         map[player[:y]][player[:x]] = Space
-        case map[y][x]
+        thing_here = map[y][x] 
+        case thing_here
           when Wall
-            player[:health] -= 1
-            message << "Ouch!  "
+            if player[:can_carry]
+                pick_up(player,map,x,y)
+                message << "You picked up a wall.  "
+              else
+                player[:health] -= 1
+                message << "Ouch!  "
+              end
           when Numeric
             message << "Excuse me.   "
           when Space
             player[:x],player[:y] = x,y
           else
-            player[:inventory] << map[y][x]
+            player[:inventory] << thing_here
             map[y][x] = Space
             player[:x],player[:y] = x,y
             x = rand(width)
             y = rand(height)
-            map[y][x] = ('a'.ord+rand(10)).chr if map[y][x] == Space
+            map[y][x] = random_item if map[y][x] == Space
           end
         map[player[:y]][player[:x]] = player[:number]
       end
