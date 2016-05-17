@@ -183,7 +183,9 @@ while not player[:dead]
             player[:inventory] << map[y][x]
             map[y][x] = Space
             player[:x],player[:y] = x,y
-            # Add something random somewhere
+            x = rand(width)
+            y = rand(height)
+            map[y][x] = ('a'.ord+rand(10)).chr if map[y][x] == Space
           end
         map[player[:y]][player[:x]] = player[:number]
       end
