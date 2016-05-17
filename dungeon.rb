@@ -84,7 +84,7 @@ def random_block
 
 100.times { puts }
 def draw(map)
-    snap = map.map(&:to_a)
+    snap = map.map(&:to_a)[0..-2]
     print "\e[;H\e[;J",snap.each_with_index.map { |line,y|
         line.each_with_index.map { |block,x|
             if block.is_a? Numeric
@@ -119,18 +119,21 @@ def drop(player,map)
 
 server = ARGV.length == 0
 
-map = if server
+map = $map = if server
     map = (0...height).map { |y| (0...width).map { |x| random_block }}
+    map << []
     map.each { |row| row.extend DRbUndumped }
     p local_ip
     DRb.start_service("druby://#{local_ip}:9001", map)
-    map
   else
     p ARGV.first
     DRb.start_service
     DRbObject.new(nil, "druby://#{ARGV.first}:9001")
   end
-  
+
+def players(n)
+    map[-1][n]
+  end
 player = {
     x: rand(width), 
     y: rand(height), 
@@ -139,19 +142,33 @@ player = {
     inventory: [], 
     number: server ? 1 : map.flatten.select { |q| q.is_a? Numeric}.max+1
   }
-
+player.extend DRbUndumped
+map[-1][player[:number] = player
 map[player[:y]][player[:x]] = player[:number]
 
 message = ""
 prior_x,prior_y = 0,0
 while not player[:dead]
+    if server
+         (0...width).each { |x|
+             (0...height) { |y|
+                 n = map[y][x]
+                 if n.is_a? Numeric
+                      plr = players(n)
+                      if plr[:x] != x || plr[:y] != y
+                          map[y][x] = Space
+                        end
+                    end
+               }
+           }
+       end
     if player[:health] < 0
         message << "  You have died."
         player[:dead] = true
       end
     being_carried = map[player[:y]][player[:x]] != player[:number]
     while (ch = get_char).nil?
-        sleep 0.02
+        sleep 0.05
         draw map
         puts "Health: #{player[:health]}  Inventory: #{player[:inventory].join(',')}   #{message}"
         puts "IP: #{local_ip}" if server
