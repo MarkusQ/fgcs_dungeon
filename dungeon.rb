@@ -114,6 +114,10 @@ map[player[:y]][player[:x]] = player[:number]
 
 message = ""
 while not player[:dead]
+    if player[:health] < 0
+        message << "  You have died."
+        player[:dead] = true
+      end
     while (ch = get_char).nil?
         sleep 0.02
         draw map
